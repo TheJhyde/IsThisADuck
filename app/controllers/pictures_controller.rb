@@ -3,7 +3,8 @@ class PicturesController < ApplicationController
   	picture = Picture.where(name: params["id"]).first
   	@stats = {
   		total: picture.votes.count,
-  		yes: picture.votes.where(vote: 1).count
+  		yes: picture.votes.where(vote: 1).count,
+  		name: params["id"]
   	}
   	respond_to do |format|
   		format.json { render json: @stats }

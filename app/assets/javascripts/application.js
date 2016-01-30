@@ -91,12 +91,15 @@ function mouseClicked(){
 
 function resetPage(){
 	$.get('/pictures/' + image_name + ".json", function(data){
+		console.log("Image: " + data["name"]);
+		console.log("Total Votes: " + data["total"]);
+		console.log("Yes votes: " + data["yes"]);
 		if(last_vote == 1){
 			percentage = Math.floor((data["yes"]/data["total"]) * 100);
 		}else{
 			percentage = Math.floor((1 - data["yes"]/data["total"]) * 100);
 		}
-		if(percentage < 50){
+		if(percentage <= 50){
 			points++;
 		}else{
 			points--;
@@ -107,11 +110,12 @@ function resetPage(){
 	lastChange = millis();
 
 	whichImage = Math.floor(Math.random() * 61 + 1);
-	image_name = "duck" + whichImage
-	console.log(image_name);
+	image_name = "duck" + whichImage;
 
 	img = loadImage("/" + image_name + ".jpeg", function(new_img){
 	  	new_img.resize(400, 400);
-	  });
+	});
+
 	$.post('/pictures/' + image_name, {"vote": last_vote});
+
 }

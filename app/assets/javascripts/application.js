@@ -104,8 +104,9 @@ function resetPage(){
 		}else{
 			points--;
 		}
+		// I don't want this to update till the percentage's been calculated
+		$.post('/pictures/' + data["name"], {"vote": last_vote});
 	});
-	$.post('/pictures/' + image_name, {"vote": last_vote});
 
 	state = 1;
 	lastChange = millis();

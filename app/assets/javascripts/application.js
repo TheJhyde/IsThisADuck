@@ -105,6 +105,7 @@ function resetPage(){
 			points--;
 		}
 	});
+	$.post('/pictures/' + image_name, {"vote": last_vote});
 
 	state = 1;
 	lastChange = millis();
@@ -115,7 +116,4 @@ function resetPage(){
 	img = loadImage("/" + image_name + ".jpeg", function(new_img){
 	  	new_img.resize(400, 400);
 	});
-
-	$.post('/pictures/' + image_name, {"vote": last_vote});
-
 }

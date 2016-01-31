@@ -1,3 +1,18 @@
 <div id = "canvas">
     
 </div>
+
+<div id = "form">
+	<%= form_for @score do |f| %>
+		<%= f.label :name %><br/>
+		<%= f.text_field :name %><br/>
+
+		<%= f.hidden_field :score%>
+
+		<%= f.submit %>
+	<% end %>
+</div>
+
+<p>
+	Many thanks to the US Fish and Wildlife Service <a href="http://digitalmedia.fws.gov/cdm/landingpage/collection/natdiglib">National Digital Library</a> for the pictures of ducks and not-ducks.
+</p>

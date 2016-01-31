@@ -1,0 +1,19 @@
+<h1>High Scores!</h1>
+<div id="scores">
+	<ol>
+	<% @scores.order(score: :desc).each do |score| %>
+		<li> <%= score.name %>, <%= score.score %> rounds</li>
+	<% end %>
+	</ol>
+</div>
+<h1>Most Duck</h1>
+<img src = '/<%= @most_duck.name %>.jpeg' width = "400"><br/>
+<%= @most_duck.yes_percent * 100 %>% Duck<br/>
+
+<h1>Least Duck</h1>
+<img src = '/<%= @least_duck.name %>.jpeg' width = "400"><br/>
+<%= @least_duck.yes_percent * 100 %>% Duck<br/>
+
+<p>
+	<a href = "/">Play Again?</a>
+</p>

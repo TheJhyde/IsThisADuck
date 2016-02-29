@@ -1,27 +1,16 @@
-// This is a manifest file that'll be compiled into application.js, which will include all the files
-// listed below.
-//
-// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
-// or any plugin's vendor/assets/javascripts directory can be referenced here using a relative path.
-//
-// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
-// compiled file.
-//
-// Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
-// about supported directives.
-//
 //= require jquery
 //= require jquery_ujs
 //= require p5.js
 //= require_tree .
 
-var img;
-var ratio;
-var state;
+//Since this was a fast project for a game jam, I just stuck all the javascript in the application page.
+var img; //the image currently being shown
+var image_name; //the name of the image currently being shown
+
+var state; //the current state of the game
 var lastChange;
-var image_name;
-var last_vote;
-var percentage;
+var last_vote; //how they voted last time
+var percentage; //The percentage who agree or disagree with your opinion
 var lives = 5;
 var rounds = 0;
 var high_score = false;
@@ -43,6 +32,7 @@ function draw() {
     textAlign(LEFT, BOTTOM);
     textSize(20);
     text("Rounds: " + rounds + " Lives: " + lives, 0, 600);
+    //State 0, show a picture to be judged
     if(state == 0){
 	  textSize(80);
 	  textAlign(LEFT, TOP);
@@ -58,6 +48,7 @@ function draw() {
 	  fill(0);
 	  text("YES", 30, 490);
 	  text("NO", 500, 490);
+	//State 1, showing the outcome of your guess
 	}else if(state == 1){
 	  fill(0);
 	  textSize(80);
@@ -74,6 +65,7 @@ function draw() {
 	  if(millis() - lastChange > 2000){
 	  	state = 0;
 	  }
+	//State 2, you've died. See your score, are informed if you got a high one
 	}else if(state == 2){
 	  textSize(40);
 	  textAlign(LEFT, TOP);
@@ -82,7 +74,7 @@ function draw() {
 	  textSize(20);
 	  text("You made it " + rounds + " rounds in IS THIS A DUCK?", 0, 300);
 	  if(high_score){
-	  	text("You got a HIGH SCORE! Enter your name below", 0, 400);
+	  	text("You got a HIGH SCORE! Enter your name below.", 0, 400);
 	  }else{
 		text("Thank you.", 0, 400);
 	  }
@@ -91,6 +83,7 @@ function draw() {
 
 function mouseClicked(){
 	if(state == 0){
+		//Takes their votes and moves the game to the next stage
 		if(mouseY > 480 && mouseY < 530){
 			if(mouseX > 20 && mouseX < 120){
 				last_vote = 1;
@@ -105,15 +98,14 @@ function mouseClicked(){
 
 function resetPage(){
 	rounds++;
+	//Pulls the informaton of the picture to score the player
 	$.get('/pictures/' + image_name + ".json", function(data){
-		console.log("Image: " + data["name"]);
-		console.log("Total Votes: " + data["total"]);
-		console.log("Yes votes: " + data["yes"]);
 		if(last_vote == 1){
 			percentage = Math.floor((data["yes"]/data["total"]) * 100);
 		}else{
 			percentage = Math.floor((1 - data["yes"]/data["total"]) * 100);
 		}
+		//Players score if the opinions are an equal 50/50 split. I am being kind.
 		if(percentage > 50){
 			lives--;
 			if(lives == 0){
@@ -121,21 +113,22 @@ function resetPage(){
 				checkScore();
 			}
 		}
-		// I don't want this to update till the percentage's been calculated
 		$.post('/pictures/' + data["name"], {"vote": last_vote});
 	});
 
 	state = 1;
 	lastChange = millis();
 
+	//Randomly generates the next image to load
 	whichImage = Math.floor(Math.random() * 61 + 1);
 	image_name = "duck" + whichImage;
-
 	img = loadImage("/" + image_name + ".jpeg", function(new_img){
 	  	new_img.resize(400, 400);
 	});
 }
 
+//Compares the current number to the list of high scores on the server and sees if it's a high score
+//If it is, let them submit their name to the high score list
 function checkScore(){
 	$.get('/is_high/' + rounds + '.json', function(data){
 		if(data == 1){
